@@ -5,16 +5,16 @@ const form = document.querySelector("form");
 const input = document.querySelector("form > input");
 
 const todos = [
-    {
-      text: "je suis une todo",
-      done: false,
-      editMode : true,
-    },
-    {
-      text: "faire du javascript",
-      done: true,
-      editMode : false,
-    }
+    // {
+    //   text: "je suis une todo",
+    //   done: false,
+    //   editMode : true,
+    // },
+    // {
+    //   text: "faire du javascript",
+    //   done: true,
+    //   editMode : false,
+    // }
 ];
 
 form.addEventListener("submit", event => {
@@ -23,6 +23,13 @@ form.addEventListener("submit", event => {
     input.value = "";
     addTodo(value);
 });
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && todos.find(t => t.editMode)) {
+      todos.find(t => t.editMode).editMode = false;
+      displayTodo();
+    }
+  });
 
 const displayTodo = () => {
     const todosNode = todos.map((todo, index) => {
@@ -40,8 +47,10 @@ const createTodoElement = (todo, index) => {
     const li = document.createElement("li");
     const buttonDelete = document.createElement("button");
     buttonDelete.innerHTML = "Supprimer";
+    buttonDelete.classList.add("danger");
     const buttonEdit = document.createElement("button");
     buttonEdit.innerHTML = "Edit";
+    buttonEdit.classList.add("primary");
     buttonDelete.addEventListener("click", event => {
         event.stopPropagation();
         deleteTodo(index);
@@ -52,10 +61,18 @@ const createTodoElement = (todo, index) => {
     });
     li.innerHTML = `
       <span class="todo ${todo.done ? "done" : ""}"></span>
-      <p>${todo.text}</p>
+      <p class="${todo.done ? "done" : ""}">${todo.text}</p>
     `;
+    let timer;
     li.addEventListener("click", event => {
-        toggleTodo(index);
+      if (event.detail === 1) {
+        timer = setTimeout(() => {
+          toggleTodo(index);
+        }, 200);
+      } else if (event.detail > 1) {
+        clearTimeout(timer);
+        toggleEditMode(index);
+      }
     });
     li.append(buttonDelete, buttonEdit);
     return li;
@@ -66,10 +83,17 @@ const createTodoEditElement = (todo,index) => {
     const input = document.createElement("input");
     input.type = "text";
     input.value = todo.text;
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          editTodo(index, input);
+        }
+    });
     const buttonSave = document.createElement("button");
     buttonSave.innerHTML = "Save";
+    buttonSave.classList.add("success");
     const buttonCancel = document.createElement("button");
     buttonCancel.innerHTML = "Cancel";
+    buttonCancel.classList.add("danger");
     buttonCancel.addEventListener("click", event => {
         event.stopPropagation();
         toggleEditMode(index);
@@ -82,11 +106,14 @@ const createTodoEditElement = (todo,index) => {
 };
 
 const addTodo = text => {
-    todos.push({
-        text,
-        done: false
-    });
-    displayTodo();
+    text = text.trim();
+    if (text) {
+        todos.push({
+            text : `${text[0].toUpperCase()}${text.slice(1)}`,
+            done: false
+        });
+        displayTodo();
+    }
 };
 
 const deleteTodo = index => {

@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 p {
@@ -11,7 +12,9 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 150px;
 }
 
 .container {
@@ -35,6 +38,20 @@ button {
     cursor: pointer;
     margin: 0 3px;
     outline: 0;
+    color: aliceblue;
+    background-color: #333;
+}
+
+button.danger {
+    background: #eb2f06;
+}
+
+button.primary {
+    background: #4a69bd;
+}
+
+button.success {
+    background: #2ed573;
 }
 
 input {
@@ -58,6 +75,7 @@ li {
     display: flex;
     align-items: center;
     padding: 10px 0;
+    cursor: pointer;
 }
 
 li input {
@@ -66,6 +84,10 @@ li input {
 
 li p {
     flex: 1;
+}
+
+li p.done {
+    text-decoration: line-through;
 }
 
 li .todo {
@@ -78,4 +100,10 @@ li .todo {
 
 li .todo.done {
     background: #333;
+}
+
+li:hover {
+    background-color: lightblue;
+    border-radius: 5px;
+    padding: 10px;
 }
